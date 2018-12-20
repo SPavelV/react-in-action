@@ -75,23 +75,53 @@ class CreateComment extends Component {
     this.state = {
       content: '',
       user: ''
-    }
+    };
+
+    this.handleUserChange = this.handleUserChange.bind(this);
+    this.handleTextChange = this.handleTextChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleUserChange(event) {
+    const val = event.target.value;
+    this.setState( () => ({
+      user: val
+    }))
+  }
+
+  handleTextChange(event) {
+    const val = event.target.value;
+    this.setState( () => ({
+      content: val
+    }))
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    this.setState( () => ({
+      user: '',
+      content: ''
+    }))
   }
 
   render() {
     return React.createElement(
       'form',
       {
-        className: 'createComment'
+        className: 'createComment',
+        onSubmit: this.handleSubmit
       },
       React.createElement('input', {
         type: 'text',
         placeholder: 'Your name',
-        value: this.state.user
+        value: this.state.user,
+        onChange: this.handleUserChange
       }),
       React.createElement('input', {
         type: 'text',
-        placeholder: 'Thoughts?'
+        placeholder: 'Thoughts?',
+        value: this.state.content,
+        onChange: this.handleTextChange
       }),
       React.createElement('input', {
         type: 'submit',
@@ -102,6 +132,7 @@ class CreateComment extends Component {
 }
 
 CreateComment.propTypes = {
+  onCommentSubmit: PropTypes.func.isRequired,
   content: PropTypes.string
 };
 
