@@ -177,22 +177,62 @@ CreateComment.propTypes = {
   content: PropTypes.string
 };
 
-const App = React.createElement(
-  Post,
-  {
-    id: 1,
-    content: ' said: This is a post!',
-    user: 'Dan'
-  },
-  React.createElement(Comment, {
-    id: 2,
-    user: 'bob',
-    content: ' commented: wow! how cool!'
-  }),
-  React.createElement(CreateComment)
-);
+class CommentBox extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      comments: this.props.comments
+    };
+    this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
+  }
 
-render(App, node);
+  handleCommentSubmit(comment) {
+    const comments = this.state.comments;
+    comment.id = Date.now();
+    const newComments = comments.concat([comment]);
+    this.setState({
+      comments: newComments
+    })
+  }
+
+  render() {
+    return React.createElement(
+      'div',
+      {
+        className: 'commentBox'
+      },
+      React.createElement(Post, {
+        id: this.props.post.id,
+        content: this.props.post.content,
+        user: this.props.post.user
+      }),
+      this.state.comments.map(function (comment) {
+        return React.createElement(Comment, {
+          key: comment.key,
+          id: comment.id,
+          content: comment.content,
+          user: comment.user
+        });
+      }),
+      React.createElement(CreateComment, {
+        onCommentSubmit: this.handleCommentSubmit
+      })
+    )
+  }
+}
+
+CommentBox.propTypes = {
+  post: PropTypes.object,
+  comments: PropTypes.arrayOf(PropTypes.object)
+};
+
+render(
+  React.createElement(CommentBox, {
+    comments: data.comments,
+    post: data.post
+  }),
+  node
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
